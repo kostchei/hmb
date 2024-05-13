@@ -5,7 +5,7 @@ const config = {
     type: Phaser.AUTO,
     width: 3840,
     height: 2160,
-    backgroundColor: '#228B22',
+    backgroundColor: '#338B33',
     scene: {
         preload: preload,
         create: create
