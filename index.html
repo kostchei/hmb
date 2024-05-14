@@ -1,15 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Phaser Game</title>
-    <style>
-        body { margin: 0; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hex Map Builder</title>
 </head>
 <body>
+    <!-- Fetch all maps when the page loads -->
+    <script src="preload.js"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            window.electronAPI.initDB().then(result => {
+                if (result.success) {
+                    // Now you can fetch maps:
+                    window.electronAPI.fetchAllMaps().then(maps => {
+                        console.log('Fetched maps:', maps);
+                    }).catch(error => {
+                        console.error('Error fetching maps:', error);
+                    });
+                } else {
+                    console.error('Database initialization failed:', result.error); 
+                }
+            });
+        });
+    </script>
+    <!-- Ensure these scripts are necessary for your app -->
     <script src="dist/bundle.js"></script>
-    <script src="src/dataStore.js"></script>
-
 </body>
 </html>

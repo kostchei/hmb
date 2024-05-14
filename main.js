@@ -1,24 +1,36 @@
-const { app, BrowserWindow } = require('electron');
+//main.js
+const { app, BrowserWindow, ipcMain } = require('electron');
+const path = require('path');
+const dbOperations = require('./src/dbOperations'); // Import dbOperations
 
 function createWindow() {
-    // Create the browser window.
     const mainWindow = new BrowserWindow({
         width: 3840,
         height: 2160,
         webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false
+            preload: path.join(__dirname, 'preload.js'),
+            nodeIntegration: true, 
+            contextIsolation: true
         }
     });
 
-    // Load the index.html of the app.
     mainWindow.loadFile('index.html');
-
-    // Open the DevTools.
     mainWindow.webContents.openDevTools();
 }
 
-app.whenReady().then(createWindow);
+// Event handlers should be registered before the renderer tries to use them
+ipcMain.handle('fetch-all-maps', dbOperations.fetchAllMaps);
+ipcMain.handle('save-map-to-db', dbOperations.saveMapToDB);
+ipcMain.handle('init-db', dbOperations.initDB);
+
+app.whenReady().then(() => {
+    createWindow();
+    
+    // Initialize the database when the main process is ready
+    dbOperations.initDB()
+        .then(() => console.log('Database initialized in main process'))
+        .catch(err => console.error('Database initialization failed:', err));
+});
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {

@@ -1,3 +1,4 @@
+// ./src/index.js
 import Phaser from 'phaser';
 import MapManager from './MapManager';
 
@@ -26,6 +27,18 @@ function preload() {
 function create() {
     const mapManager = new MapManager(this, config);
     mapManager.createMap();
+
+    // Save map data after creating the map
+    const mapId = 'map-' + Date.now(); // Example map ID
+    const mapData = mapManager.mapData;
+    window.electronAPI.saveMapToDB(mapId, mapData).then(result => {
+        if (result.success) {
+            console.log('Map saved successfully');
+        } else {
+            console.error('Error saving map:', result.error);
+        }
+    });
 }
+
 
 const game = new Phaser.Game(config);

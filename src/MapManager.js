@@ -1,9 +1,12 @@
+// ./src/MapManager.js
+
 import Phaser from 'phaser';
 
 class MapManager {
     constructor(scene, config) {
         this.scene = scene;
         this.config = config;
+        this.mapData = []; // Store map data here
 
         // Hexagon properties
         this.HEX_SIZE = 30;
@@ -36,6 +39,7 @@ class MapManager {
         const scaleRatio = this.HEX_WIDTH / 210; // Assuming original sprite width is 210
         const image = this.scene.add.image(x, y, terrain).setOrigin(0.5, 0.5);
         image.setScale(scaleRatio);
+        return image;
     }
 
     getHexCoordinatesFlatTop(q, r) {
@@ -59,9 +63,11 @@ class MapManager {
                 const { x, y } = this.getHexCoordinatesFlatTop(q, r);
                 this.drawHexagonFlatTop(graphics, x + this.config.width / 2, y + this.config.height / 2);
 
-                // Generate terrain for this hex
+                // Generate and place terrain
                 const terrain = this.generateTerrain();
                 this.placeTerrain(terrain, x + this.config.width / 2, y + this.config.height / 2);
+                // Save map data
+                this.mapData.push({ q, r, x, y, terrain });
             }
         }
     }
